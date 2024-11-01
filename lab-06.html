@@ -369,21 +369,70 @@ library(ggplot2)</code></pre>
 </div>
 <div id="exercise-1" class="section level2">
 <h2>Exercise 1</h2>
-<pre class="r"><code># Do some preliminary investigations &amp; cleaning</code></pre>
+<pre class="r"><code># Do some preliminary investigations &amp; cleaning
+
+diamonds_filtered &lt;- diamonds |&gt; 
+  filter(length_mm != 0, width_mm != 0, depth_mm != 0, na.rm = TRUE)
+
+summary(diamonds_filtered)</code></pre>
+<pre><code>##      carat               cut        color        clarity        depth_pct    
+##  Min.   :0.2000   Fair     : 1609   D: 6774   SI1    :13063   Min.   :43.00  
+##  1st Qu.:0.4000   Good     : 4902   E: 9797   VS2    :12254   1st Qu.:61.00  
+##  Median :0.7000   Very Good:12081   F: 9538   SI2    : 9185   Median :61.80  
+##  Mean   :0.7977   Premium  :13780   G:11284   VS1    : 8170   Mean   :61.75  
+##  3rd Qu.:1.0400   Ideal    :21548   H: 8298   VVS2   : 5066   3rd Qu.:62.50  
+##  Max.   :5.0100                     I: 5421   VVS1   : 3654   Max.   :79.00  
+##                                     J: 2808   (Other): 2528                  
+##    table_pct         price         length_mm         width_mm     
+##  Min.   :43.00   Min.   :  326   Min.   : 3.730   Min.   : 3.680  
+##  1st Qu.:56.00   1st Qu.:  949   1st Qu.: 4.710   1st Qu.: 4.720  
+##  Median :57.00   Median : 2401   Median : 5.700   Median : 5.710  
+##  Mean   :57.46   Mean   : 3931   Mean   : 5.732   Mean   : 5.735  
+##  3rd Qu.:59.00   3rd Qu.: 5323   3rd Qu.: 6.540   3rd Qu.: 6.540  
+##  Max.   :95.00   Max.   :18823   Max.   :10.740   Max.   :58.900  
+##                                                                   
+##     depth_mm    
+##  Min.   : 1.07  
+##  1st Qu.: 2.91  
+##  Median : 3.53  
+##  Mean   : 3.54  
+##  3rd Qu.: 4.04  
+##  Max.   :31.80  
+## </code></pre>
 </div>
 <div id="exercise-2" class="section level2">
 <h2>Exercise 2</h2>
-<pre class="r"><code>diamonds &lt;- diamonds %&gt;%
-  mutate(table_mm = table_pct * width_mm / 100)
+<pre class="r"><code>diamonds_filtered &lt;- diamonds_filtered |&gt; 
+  mutate(table_mm = table_pct * width_mm / 100) 
 
 # Overall table_mm arithmetic mean?
 
+diamonds_filtered |&gt; 
+  summarise(
+  mean(table_mm, na.rm = TRUE)
+  )</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   `mean(table_mm, na.rm = TRUE)`
+##                            &lt;dbl&gt;
+## 1                           3.30</code></pre>
+<pre class="r"><code># table_mm arithmetic mean within each clarity category
 
+avg_mm_by_clarity &lt;- diamonds_filtered |&gt; 
+  group_by(clarity) |&gt; 
+  summarise(meantab= mean(table_mm, na.rm = TRUE))
 
-
-
-
-# table_mm arithmetic mean within each clarity category</code></pre>
+avg_mm_by_clarity</code></pre>
+<pre><code>## # A tibble: 8 × 2
+##   clarity meantab
+##   &lt;ord&gt;     &lt;dbl&gt;
+## 1 I1         3.91
+## 2 SI2        3.71
+## 3 SI1        3.40
+## 4 VS2        3.25
+## 5 VS1        3.20
+## 6 VVS2       2.98
+## 7 VVS1       2.83
+## 8 IF         2.82</code></pre>
 <p><em>Add your comment here</em></p>
 <pre class="r"><code># calculate the arithmetic mean across all numeric variables</code></pre>
 </div>
